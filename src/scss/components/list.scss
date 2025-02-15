@@ -1,0 +1,26 @@
+.list__title {
+    font-weight: 500;
+    font-size: 22px;
+    margin-bottom: 30px;
+
+    @media screen and (max-width: 500px) {
+        font-size: 18px;
+        margin-bottom: 25px;
+    }
+}
+
+.list__elements {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 22px;
+
+    @media screen and (max-width: 555px) {
+        justify-content: start;
+        flex-wrap: nowrap;
+        gap: 16px;
+        padding: 15px 12px;
+        overflow-x: scroll;
+    }
+}

@@ -1,0 +1,48 @@
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 92px;
+    border-bottom: 0.5px solid #B2B2B2;
+    padding-top: 16px;
+
+    @media screen and (max-width: 500px) {
+        justify-content: space-between;
+        gap: 0;
+    }
+
+    &>.tab {
+        font-weight: 500;
+        font-size: 16px;
+        padding-bottom: 20px;
+        max-width: 115px;
+        cursor: pointer;
+        position: relative;
+
+        @media screen and (max-width: 500px) {
+            font-size: 15px;
+            padding-bottom: 7px;
+
+            &>span {
+                display: none;
+            }
+        }
+
+        &.active {
+            font-weight: 600;
+            
+            &::after {
+                content: "";
+                border-bottom: 5px solid #429F3A;
+                border-radius: 5px;
+                position: absolute;
+                right: 0;
+                bottom: 1px;
+                left: 0;
+
+                @media screen and (max-width: 500px) {
+                    bottom: -2.5px;
+                }
+            }
+        }
+    }
+}
