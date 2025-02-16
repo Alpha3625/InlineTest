@@ -3,7 +3,6 @@ const gulp = require('gulp');
 // HTML
 const fileInclude = require('gulp-file-include');
 const htmlclean = require('gulp-htmlclean');
-const webpHTML = require('gulp-webp-html');
 const htmlmin = require('gulp-htmlmin'); // Минификация HTML
 
 // SASS
@@ -11,18 +10,16 @@ const sass = require('gulp-sass')(require('sass'));
 const sassGlob = require('gulp-sass-glob');
 const autoprefixer = require('gulp-autoprefixer');
 const csso = require('gulp-csso'); // Минификация CSS
-const webpCss = require('gulp-webp-css');
 
-const server = require('gulp-server-livereload');
 const clean = require('gulp-clean');
 const fs = require('fs');
 const sourceMaps = require('gulp-sourcemaps');
-const groupMedia = require('gulp-group-css-media-queries');
 const plumber = require('gulp-plumber');
 const notify = require('gulp-notify');
 const webpack = require('webpack-stream');
 const babel = require('gulp-babel');
 const changed = require('gulp-changed');
+const ghPages = require('gh-pages'); // Для деплоя на GitHub Pages
 
 // Images
 const imagemin = require('gulp-imagemin');
@@ -31,13 +28,9 @@ const webp = require('gulp-webp');
 // JavaScript
 const uglify = require('gulp-uglify'); // Минификация JavaScript
 
-gulp.task('clean:prod', function (done) {
-	if (fs.existsSync('./prod/')) {
-		return gulp
-			.src('./prod/', { read: false })
-			.pipe(clean({ force: true }));
-	}
-	done();
+gulp.task('clean:prod', function () {
+	return gulp.src('./prod/', { read: false, allowEmpty: true })
+		.pipe(clean({ force: true }));
 });
 
 const fileIncludeSetting = {
@@ -68,21 +61,21 @@ gulp.task('html:prod', function () {
 
 gulp.task('sass:prod', function () {
 	return gulp
-		.src(['./src/scss/*.scss', '!./src/scss/{reset,base}.scss'])
+		.src(['./src/scss/*.scss', '!./src/scss/{reset,fonts,base}.scss'])
 		.pipe(changed('./prod/css/'))
 		.pipe(plumber(plumberNotify('SCSS')))
 		.pipe(sourceMaps.init())
-		.pipe(autoprefixer())
 		.pipe(sassGlob())
 		.pipe(sass())
+		.pipe(autoprefixer())
 		.pipe(csso()) // Минификация CSS
 		.pipe(sourceMaps.write())
-		.pipe(gulp.dest('./prod/css/'));
+		.pipe(gulp.dest('./prod/'));
 });
 
 gulp.task('images:prod', function () {
 	return gulp
-		.src('../src/img/**/*')
+		.src('./src/img/**/*')
 		.pipe(changed('./prod/img/'))
 		.pipe(webp())
 		.pipe(gulp.dest('./prod/img/'))
@@ -107,17 +100,20 @@ gulp.task('js:prod', function () {
 		.pipe(babel())
 		.pipe(webpack(require('./../webpack.config.js')))
 		.pipe(uglify()) // Минификация JavaScript
-		.pipe(gulp.dest('./prod/js/'));
+		.pipe(gulp.dest('./prod/'));
 });
 
-const serverOptions = {
-	livereload: true,
-	open: true,
-};
-
-gulp.task('server:prod', function () {
-	return gulp.src('./prod/').pipe(server(serverOptions));
+// Задача для деплоя на GitHub Pages
+gulp.task('deploy', function (done) {
+	return ghPages.publish('prod', function () {
+		console.log('Deploy Complete!');
+		done();
+	});
 });
 
-// Основная задача для разработки
-gulp.task('prod', gulp.series('clean:prod', gulp.parallel('html:prod', 'sass:prod', 'images:prod', 'fonts:prod', 'js:prod')));
+// Основная задача для продакшена
+gulp.task('prod', gulp.series(
+	'clean:prod', 
+	gulp.parallel('html:prod', 'sass:prod', 'images:prod', 'fonts:prod', 'js:prod'),
+	'deploy' // Добавляем задачу деплоя в конец
+));

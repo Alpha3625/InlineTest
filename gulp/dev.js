@@ -5,6 +5,7 @@ const sassGlob = require('gulp-sass-glob');
 const server = require('gulp-server-livereload');
 const clean = require('gulp-clean');
 const fs = require('fs');
+const autoprefixer = require('gulp-autoprefixer');
 const sourceMaps = require('gulp-sourcemaps');
 const plumber = require('gulp-plumber');
 const notify = require('gulp-notify');
@@ -51,14 +52,15 @@ gulp.task('html:dev', function () {
 gulp.task('sass:dev', function () {
 	return (
 		gulp
-			.src(['./src/scss/*.scss', '!./src/scss/{reset,base}.scss'])
+			.src(['./src/scss/*.scss', '!./src/scss/{reset,fonts,base}.scss'])
 			.pipe(changed('./dev/css/'))
 			.pipe(plumber(plumberNotify('SCSS')))
 			.pipe(sourceMaps.init())
 			.pipe(sassGlob())
 			.pipe(sass())
+            .pipe(autoprefixer())
 			.pipe(sourceMaps.write())
-			.pipe(gulp.dest('./dev/css/'))
+			.pipe(gulp.dest('./dev/'))
 	);
 });
 
@@ -84,7 +86,7 @@ gulp.task('js:dev', function () {
 		.pipe(plumber(plumberNotify('JS')))
 		.pipe(babel())
 		.pipe(webpack(require('./../webpack.config.js')))
-		.pipe(gulp.dest('./dev/js/'));
+		.pipe(gulp.dest('./dev/'));
 });
 
 const serverOptions = {

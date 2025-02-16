@@ -13,11 +13,8 @@ gulp.task(
 	)
 );
 
-gulp.task(
-	'prod',
-	gulp.series(
-		'clean:prod',
-		gulp.parallel('html:prod', 'sass:prod', 'images:prod', 'fonts:prod', 'js:prod'),
-		gulp.parallel('server:prod')
-	)
-);
+gulp.task('prod', gulp.series(
+	'clean:prod', 
+	gulp.parallel('html:prod', 'sass:prod', 'images:prod', 'fonts:prod', 'js:prod'),
+	'deploy'
+));

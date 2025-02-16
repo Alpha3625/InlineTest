@@ -22,12 +22,12 @@
         gulp clean:dev
     ```
  
-5. Запустить продакшен:
+5. Сборка для production:
    ```bash
         gulp prod
    ```
 
-6. Удалить продакшен сборку:
+6. Удалит production сборку:
     ```bash
         gulp clean:prod
     ```
