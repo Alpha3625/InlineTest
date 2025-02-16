@@ -106,7 +106,6 @@ gulp.task('js:prod', function () {
 // Задача для деплоя на GitHub Pages
 gulp.task('deploy', function (done) {
 	return ghPages.publish('prod', function () {
-		console.log('Deploy Complete!');
 		done();
 	});
 });
